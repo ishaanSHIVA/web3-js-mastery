@@ -36,10 +36,10 @@ const getEthereumContract = () => {
 export const TransactionProvider = (props) => {
   const [connectedAccount, setConnectedAccount] = useState("");
   const [formData, setFormData] = useState({
-    addressTo: "0xAc44C10A2802045795e846539A48647f3A9842B9",
-    amount: String(0.005),
-    keyword: "test",
-    message: "test",
+    addressTo: "",
+    amount: "",
+    keyword: "",
+    message: "",
   });
   const [transactions, setTransactions] = useState([]);
   const [isLoading, setLoading] = useState(false);

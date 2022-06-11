@@ -9,18 +9,21 @@ import {
   Transaction,
 } from "./ components";
 import "./App.css";
+import { TransactionProvider } from "./context/Transaction.context";
 
 const App = () => {
   return (
-    <div className="min-h-screen">
-      <div className="gradient-bg-welcome">
-        <Navbar></Navbar>
-        <Welcome></Welcome>
+    <TransactionProvider>
+      <div className="min-h-screen">
+        <div className="gradient-bg-welcome">
+          <Navbar></Navbar>
+          <Welcome></Welcome>
+        </div>
+        <Services></Services>
+        <Transaction></Transaction>
+        <Footer></Footer>
       </div>
-      <Services></Services>
-      <Transaction></Transaction>
-      <Footer></Footer>
-    </div>
+    </TransactionProvider>
   );
 };
 

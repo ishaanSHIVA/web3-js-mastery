@@ -41,6 +41,7 @@ export const TransactionProvider = (props) => {
     keyword: "test",
     message: "test",
   });
+  const [transactions, setTransactions] = useState([]);
   const [isLoading, setLoading] = useState(false);
   const [transactionCount, setTransactionCount] = useState(
     localStorage.getItem("transactionCount")
@@ -63,7 +64,7 @@ export const TransactionProvider = (props) => {
       if (accounts.length) {
         setConnectedAccount(accounts[0]);
 
-        // getAllTransactions
+        getAllTransactions();
       } else {
         console.log("No accounts found");
       }
@@ -82,6 +83,49 @@ export const TransactionProvider = (props) => {
       });
 
       setConnectedAccount(accounts[0]);
+    } catch (err) {
+      console.log(err);
+      throw new Error("No eth obj!!!");
+    }
+  };
+
+  const checkIfTransactionsExist = async () => {
+    try {
+      if (!ethereum) return alert("Please install metamask!!!");
+
+      const { transactionContract } = getEthereumContract();
+      const transactionCount = await transactionContract.getAllTransactions();
+
+      window.localStorage.setItem("transactionCount", transactionCount);
+      getAllTransactions();
+    } catch (err) {
+      console.log(err);
+      throw new Error("No eth obj!!!");
+    }
+  };
+
+  const getAllTransactions = async () => {
+    try {
+      if (!ethereum) return alert("Please install metamask!!!");
+      const { transactionContract } = getEthereumContract();
+      const availableTransactions =
+        await transactionContract.getAllTransactions();
+
+      const structuredTransactions = availableTransactions.map(
+        (transaction) => {
+          return {
+            addressTo: transaction.reciever,
+            addressFrom: transaction.sender,
+            timestamp: "12/21/2021, 4:33:21 PM",
+            message: transaction.message,
+            keyword: transaction.keyword,
+            amount: parseInt(transaction.amount._hex) / 10 ** 18,
+          };
+        }
+      );
+
+      console.log(structuredTransactions);
+      setTransactions(structuredTransactions);
     } catch (err) {
       console.log(err);
       throw new Error("No eth obj!!!");
@@ -144,6 +188,8 @@ export const TransactionProvider = (props) => {
 
   useEffect(() => {
     checkIfWalletIsConnected();
+    console.log("check for transaction");
+    checkIfTransactionsExist();
   }, [ethereum]);
 
   return (
@@ -156,6 +202,7 @@ export const TransactionProvider = (props) => {
         setFormData,
         sendTransaction,
         isLoading,
+        transactions,
       }}
     >
       {props.children}
